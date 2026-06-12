@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <!-- 适配手机屏幕 -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>亲爱的</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden; /* 隐藏滚动条 */
+            background: #fff;
+        }
+        /* 弹窗样式 */
+        .popup {
+            position: absolute;
+            width: 250px;
+            height: 60px;
+            background: pink;
+            border-radius: 8px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-family: "KaiTi", "楷体", sans-serif;
+            font-size: 18px;
+            font-weight: bold;
+            z-index: 9999;
+            cursor: move;
+        }
+    </style>
+</head>
+<body>
+    <script>
+        // 生成N个弹窗（可调整数量）
+        const popupCount = 50; // 手机端建议减少数量，避免卡顿
+        const screenWidth = window.innerWidth;
+        const screenHeight = window.innerHeight;
+
+        // 创建单个弹窗
+        function createPopup() {
+            const popup = document.createElement('div');
+            popup.className = 'popup';
+            popup.innerText = '我想你了';
+
+            // 随机位置（避免超出屏幕）
+            const maxX = screenWidth - 250;
+            const maxY = screenHeight - 60;
+            const x = Math.random() * maxX;
+            const y = Math.random() * maxY;
+
+            popup.style.left = `${x}px`;
+            popup.style.top = `${y}px`;
+
+            // 可选：添加拖拽功能（更贴近桌面体验）
+            dragPopup(popup);
+
+            document.body.appendChild(popup);
+        }
+
+        // 弹窗拖拽逻辑
+        function dragPopup(element) {
+            let isDragging = false;
+            let startX, startY, initialX, initialY;
+
+            element.addEventListener('mousedown', (e) => {
+                isDragging = true;
+                startX = e.clientX;
+                startY = e.clientY;
+                initialX = parseFloat(element.style.left);
+                initialY = parseFloat(element.style.top);
+                element.style.zIndex = 99999; // 拖拽时置顶
+            });
+
+            document.addEventListener('mousemove', (e) => {
+                if (!isDragging) return;
+                const dx = e.clientX - startX;
+                const dy = e.clientY - startY;
+                element.style.left = `${initialX + dx}px`;
+                element.style.top = `${initialY + dy}px`;
+            });
+
+            document.addEventListener('mouseup', () => {
+                isDragging = false;
+            });
+        }
+
+        // 批量创建弹窗（间隔生成，避免卡顿）
+        let count = 0;
+        const interval = setInterval(() => {
+            createPopup();
+            count++;
+            if (count >= popupCount) clearInterval(interval);
+        }, 50); // 间隔50ms生成一个
+    </script>
+</body>
+</html>
